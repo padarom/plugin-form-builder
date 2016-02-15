@@ -37,31 +37,31 @@ class MyExampleAddForm extends AbstractForm {
     public function save() {
         parent::save();
 
-        $this->objectAction = new wcf\data\example\ExampleAction([], 'create', [
-            'data' => [
+        $this->objectAction = new wcf\data\example\ExampleAction(array(), 'create', array(
+            'data' => array(
                 'exampleID' => $this->exampleID,
                 'title' => $this->title,
                 'description' => $this->description,
-            ],
-        ]);
+            ),
+        ));
 
         $this->objectAction->executeAction();
         $this->saved();
 
-        WCF::getTPL()->assign([
+        WCF::getTPL()->assign(array(
             'success' => true,
-        ]);
+        ));
     }
 
     public function assignVariables() {
         parent::assignVariables();
 
-        WCF::getTPL()->assign([
+        WCF::getTPL()->assign(array(
             'action' => 'add',
             'exampleID' => $this->branchID,
             'title' => $this->title,
             'description' => $this->description,
-        ]);
+        ));
     }
 }
 ```
@@ -76,11 +76,11 @@ use wcf\form\FormBuilder;
 
 class MyExampleAddForm extends FormBuilder {
     protected function getAttributes() {
-        return [
+        return array(
             'exampleID' => 'int',
             'title' => 'string'
             'description' => 'string',
-        ];
+        );
     }
 
     protected function getObjectActionType() {
