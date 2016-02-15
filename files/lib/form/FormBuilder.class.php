@@ -11,7 +11,9 @@ namespace wcf\form;
  * @category    Community Framework
  */
 abstract class FormBuilder extends AbstractForm {
+    protected $validationRules = array();
     
+
     protected abstract function getAttributes();
 
     protected abstract function getObjectActionType();
