@@ -2,7 +2,7 @@
 namespace wcf\form;
 
 /**
- * Form Builder for easier form development
+ * Class to validate form inputs with
  *
  * @author      Christopher Mühl
  * @copyright   2016 Christopher Mühl
@@ -10,9 +10,6 @@ namespace wcf\form;
  * @subpackage  form
  * @category    Community Framework
  */
-abstract class FormBuilder extends AbstractForm {
+class Validator {
     
-    protected abstract function getAttributes();
-
-    protected abstract function getObjectActionType();
 }
