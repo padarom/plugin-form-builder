@@ -98,6 +98,11 @@ class Validator {
         return checkdate($date['month'], $date['day'], $date['year']);
     }
 
+    protected static function validateIsset($value)
+    {
+        return isset($value);
+    }
+
     protected static function parseRule($rules)
     {
         if (is_array($rules)) {
