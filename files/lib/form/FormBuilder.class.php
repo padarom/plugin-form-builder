@@ -12,7 +12,9 @@ use wcf\system\WCF;
  * @category    Community Framework
  */
 abstract class FormBuilder extends AbstractForm {
-    protected $validationRules = array();
+    protected $attributeList = null;
+
+    protected $valueList = array();
 
     /**
      * Return a list of attributes that is to be used in this form.
@@ -27,6 +29,38 @@ abstract class FormBuilder extends AbstractForm {
      * @return string
      */
     protected abstract function getObjectActionType();
+
+    /**
+     * Builds an attribute list from the values received in getAttributes()
+     * and expands them if necessary.
+     *
+     * @return array
+     */
+    protected function buildAttributeList() {
+        if (!is_null($this->attributeList)) {
+            return $this->attributeList;
+        }
+
+        $list = $this->getAttributes();
+        foreach ($list as $name => &$options) {
+            // Turn type hint to options array
+            if (is_string($options)) {
+                $options = array(
+                    'type' => $options,
+                    'required' => true,
+                    'rule' => 'isset',
+                );
+            }
+
+            // Add options if not specified
+            $options = array_merge(array(
+                'required' => true,
+                'rule'     => 'isset',
+            ), $options);
+        }
+
+        return $this->attributeList = $list;
+    }
 
     /**
      * Is called when the form was submitted.
@@ -44,6 +78,14 @@ abstract class FormBuilder extends AbstractForm {
      */
     public function validate() {
         parent::validate();
+
+        $attributes = $this->buildAttributeList();
+        foreach ($attributes as $name => $options) {
+            // Validate the attribute
+            if (!Validator::validate($this->valueList[$name]), $options['rule'])) {
+                throw new UserInputException($name);
+            }
+        }
     }
 
     /**
@@ -62,6 +104,15 @@ abstract class FormBuilder extends AbstractForm {
      */
     public function readFormParameters() {
         parent::readFormParameters();
+ 
+        foreach ($this->buildAttributeList() as $name => $options) {
+            if (!isset($_POST[$name])) {
+                $this->valueList[$name] = null;
+            }
+            else {
+                $this->valueList[$name] = $_POST[$name];
+            }
+        }
     }
 
     /**
