@@ -16,6 +16,15 @@ abstract class FormBuilder extends AbstractForm {
 
     protected $valueList = array();
 
+    protected $usePersonalSave = false;
+
+    /*
+     * The action to be performed on the object action type.
+     *
+     * @var string
+     */
+    protected $action = 'create';
+
     /**
      * Return a list of attributes that is to be used in this form.
      *
@@ -36,7 +45,8 @@ abstract class FormBuilder extends AbstractForm {
      *
      * @return array
      */
-    protected function buildAttributeList() {
+    protected function buildAttributeList() 
+    {
         if (!is_null($this->attributeList)) {
             return $this->attributeList;
         }
@@ -47,8 +57,6 @@ abstract class FormBuilder extends AbstractForm {
             if (is_string($options)) {
                 $options = array(
                     'type' => $options,
-                    'required' => true,
-                    'rule' => 'isset',
                 );
             }
 
@@ -56,6 +64,7 @@ abstract class FormBuilder extends AbstractForm {
             $options = array_merge(array(
                 'required' => true,
                 'rule'     => 'isset',
+                'skip'     => false,
             ), $options);
         }
 
@@ -67,7 +76,8 @@ abstract class FormBuilder extends AbstractForm {
      *
      * @see \wcf\form\IForm::submit()
      */
-    public function submit() {
+    public function submit() 
+    {
         parent::submit();
     }
     
@@ -76,11 +86,16 @@ abstract class FormBuilder extends AbstractForm {
      *
      * @see \wcf\form\IForm::validate()
      */
-    public function validate() {
+    public function validate() 
+    {
         parent::validate();
 
         $attributes = $this->buildAttributeList();
         foreach ($attributes as $name => $options) {
+            // Don't verify if it isn't a required option
+            if ($options['required'] == false)
+                continue;
+
             // Validate the attribute
             if (!Validator::validate($this->valueList[$name]), $options['rule'])) {
                 throw new UserInputException($name);
@@ -93,8 +108,31 @@ abstract class FormBuilder extends AbstractForm {
      *
      * @see \wcf\form\IForm::save()
      */
-    public function save() {
+    public function save() 
+    {
         parent::save();
+
+        // Don't run any of this code if it's not desired.
+        if ($this->usePersonalSave) {
+            return;
+        }
+
+        $values = $this->valueList;
+        $values = array_filter(array_flip($values), function($element) {
+            return !$this->buildAttributeList[$element]['skip'];
+        });
+
+        $objectActionType = $this->getObjectActionType();
+        $this->objectAction = new $objectActionType(array(), $this->action, array(
+            'data' => array_merge($this->additionalFields, $values),
+        ));
+
+        $this->objectAction->executeAction();
+        $this->saved();
+
+        WCF::getTPL()->assign(array(
+            'success' => true,
+        ));
     }
 
     /**
@@ -102,17 +140,29 @@ abstract class FormBuilder extends AbstractForm {
      *
      * @see \wcf\form\IForm::readFormParameters()
      */
-    public function readFormParameters() {
+    public function readFormParameters() 
+    {
         parent::readFormParameters();
  
         foreach ($this->buildAttributeList() as $name => $options) {
-            if (!isset($_POST[$name])) {
-                $this->valueList[$name] = null;
-            }
-            else {
-                $this->valueList[$name] = $_POST[$name];
-            }
+            $this->valueList[$name] = $this->readParameter($name, $_POST, $options['type']);
         }
+    }
+
+    /**
+     * Reads a parameter from the given haystack and converts it to the given type.
+     *
+     * @param  mixed      $needle     The key of the desired value in the haystack array
+     * @param  array      $haystack   The array to get the value from
+     * @param  string     $type       The type the value should be converted to
+     * @return mixed|null
+     */
+    protected function readParameter($needle, $haystack, $type == 'string') 
+    {
+        if (!isset($haystack[$needle]))
+            return null;
+
+        return $haystack[$needle];
     }
 
     /**
@@ -121,7 +171,8 @@ abstract class FormBuilder extends AbstractForm {
      *
      * @see \wcf\form\AbstractForm::saved()
      */
-    protected function saved() {
+    protected function saved() 
+    {
         parent::saved();
     }
 
@@ -130,7 +181,8 @@ abstract class FormBuilder extends AbstractForm {
      *
      * @see \wcf\page\IPage::readData()
      */
-    public function readData() {
+    public function readData() 
+    {
         parent::readData();
     }
 
@@ -139,7 +191,8 @@ abstract class FormBuilder extends AbstractForm {
      *
      * @see \wcf\page\IPage::assignVariables()
      */
-    public function assignVariables() {
+    public function assignVariables() 
+    {
         parent::assignVariables();
 
         WCF::getTPL()->assign(array(
