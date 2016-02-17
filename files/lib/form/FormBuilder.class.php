@@ -12,9 +12,9 @@ use wcf\system\WCF;
  * @category    Community Framework
  */
 abstract class FormBuilder extends AbstractForm {
-    protected $attributeList = null;
+    private $attributeList = null;
 
-    protected $valueList = array();
+    private $valueList = array();
 
     protected $usePersonalSave = false;
 
