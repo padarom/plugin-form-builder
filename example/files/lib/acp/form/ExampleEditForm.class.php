@@ -1,7 +1,6 @@
 <?php 
 namespace wcf\acp\form;
 
-
 class ExampleEditForm extends ExampleAddForm
 {
     protected $modelAction = 'update';
