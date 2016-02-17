@@ -224,7 +224,8 @@ abstract class FormBuilder extends AbstractForm {
             $objectType = $this->getObjectTypeName();
             $this->object = new $objectType($this->valueList[$primaryAttribute]);
 
-            if (!$this->object->$primaryAttribute) {
+            $tableIndexName = $objectType::$databaseTableIndexName;
+            if (!$this->object->$tableIndexName) {
                 throw new IllegalLinkException();
             }
         }
