@@ -16,7 +16,6 @@ use wcf\system\WCF;
  */
 abstract class FormBuilder extends AbstractForm {
     private $attributeList = null;
-    private $primaryAttribute = null;
 
     protected $object = null;
 
@@ -86,10 +85,6 @@ abstract class FormBuilder extends AbstractForm {
                 'rule'     => 'isset',
                 'skip'     => false,
             ), $options);
-
-            if (isset($options['primary']) && $options['primary'] == true) {
-                $this->primaryAttribute = $name;
-            }
         }
 
         return $this->attributeList = $list;
@@ -178,7 +173,7 @@ abstract class FormBuilder extends AbstractForm {
         // Rebuild the object
         $objectType = $this->getObjectTypeName();
         if ($objectType !== false) {
-            $this->object = new $objectType($this->valueList[$this->primaryAttribute]);
+            $this->object = new $objectType($this->valueList["primaryID"]);
         }
 
         // Assign template variables
@@ -214,17 +209,14 @@ abstract class FormBuilder extends AbstractForm {
         $this->buildAttributeList();
 
         if ($this->requiresValidObject) {
-            $primaryAttribute = $this->primaryAttribute;
-
             if (isset($_REQUEST['id'])) {
                 $this->valueList["primaryID"] = intval($_REQUEST['id']);
-                $this->valueList[$primaryAttribute] = intval($_REQUEST['id']);
             }
 
             $objectType = $this->getObjectTypeName();
-            $this->object = new $objectType($this->valueList[$primaryAttribute]);
+            $this->object = new $objectType($this->valueList["primaryID"]);
 
-            $tableIndexName = $objectType::$databaseTableIndexName;
+            $tableIndexName = $objectType::getDatabaseTableIndexName();
             if (!$this->object->$tableIndexName) {
                 throw new IllegalLinkException();
             }
