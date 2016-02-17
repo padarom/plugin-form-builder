@@ -11,6 +11,8 @@ use wcf\form\AbstractForm;
 use wcf\util\StringUtil;
 
 class MyExampleAddForm extends AbstractForm {
+    public $activeMenuItem = "wcf.acp.menu.link.example.add";
+
     public $exampleID = 0;
     public $title = '';
     public $description = '';
@@ -66,7 +68,7 @@ class MyExampleAddForm extends AbstractForm {
     }
 }
 ```
-As you can see, even this simple example contains a lot of boilerplate and repetition. We define a form that managed three attributes: `exampleID`, `title` and `description`, yet we need 60 lines of code to do that. We manually need to read the form parameters, define our save action, assign variables for template rendering and potentially even more.
+As you can see, even this simple example contains a lot of boilerplate and repetition. We define a form that managed three attributes: `exampleID`, `title` and `description`, yet we need 62 lines of code to do that. We manually need to read the form parameters, define our save action, assign variables for template rendering and potentially even more.
 
 ## After
 ```php
@@ -75,6 +77,8 @@ namespace wcf\acp\form;
 use wcf\form\FormBuilder;
 
 class MyExampleAddForm extends FormBuilder {
+    public $activeMenuItem = "wcf.acp.menu.link.example.add";
+
     protected function getAttributes() {
         return array(
             'title' => 'string',
@@ -87,7 +91,7 @@ class MyExampleAddForm extends FormBuilder {
     }
 }
 ```
-This short example accomplishes the same thing, yet it only requires us to write 16 lines of code. __That's a reduction of over 70%!__ I'd argue it's a lot more readable but undoubtedly it's not at all repetitive or unnecessarily verbose.
+This short example accomplishes the same thing, yet it only requires us to write 18 lines of code. __That's a reduction of over 70%!__ I'd argue it's a lot more readable but undoubtedly it's not at all repetitive or unnecessarily verbose.
 
 # How to use
 Build a class that inherits from `wcf\form\FormBuilder`. FormBuilder contains two abstract methods: `getAttributes()` and `getObjectActionType()`.
