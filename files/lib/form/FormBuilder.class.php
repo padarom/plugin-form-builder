@@ -1,7 +1,8 @@
 <?php
 namespace wcf\form;
-use wcf\system\WCF;
 use wcf\system\exception\UserInputException;
+use wcf\util\StringUtil;
+use wcf\system\WCF;
 
 /**
  * Form Builder for easier form development
@@ -15,7 +16,7 @@ use wcf\system\exception\UserInputException;
 abstract class FormBuilder extends AbstractForm {
     private $attributeList = null;
 
-    private $valueList = array();
+    protected $valueList = array();
 
     protected $usePersonalSave = false;
 
@@ -106,7 +107,7 @@ abstract class FormBuilder extends AbstractForm {
 
             // Validate the attribute
             if (!Validator::validate($this->valueList[$name], $options['rule'])) {
-                throw new UserInputException($name);
+                throw new UserInputException($name, $options['rule']);
             }
         }
     }
@@ -125,10 +126,14 @@ abstract class FormBuilder extends AbstractForm {
             return;
         }
 
+        $attributeList = $this->buildAttributeList();
         $values = $this->valueList;
-        $values = array_filter(array_flip($values), function($element) {
-            return !$this->buildAttributeList[$element]['skip'];
+
+        $matchedKeys = array_filter(array_keys($values), function($element) use ($attributeList) {
+            return !$attributeList[$element]['skip'];
         });
+
+        $values = array_intersect_key($values, array_flip($matchedKeys));
 
         $objectActionType = $this->getObjectActionType();
         $this->objectAction = new $objectActionType(array(), $this->modelAction, array(
@@ -167,8 +172,23 @@ abstract class FormBuilder extends AbstractForm {
      */
     protected function readParameter($needle, $haystack, $type = 'string') 
     {
-        if (!isset($haystack[$needle]))
-            return null;
+        $isset = isset($haystack[$needle]);
+
+        switch ($type) {
+            case 'bool': // Checkbox should not be true or false, but 1 or 0
+                return $isset ? 1 : 0;
+
+            case 'int':
+                return $isset ? intval($haystack[$needle]) : null;
+
+            case 'string':
+                return $isset ? StringUtil::trim($haystack[$needle]) : null;
+
+            default:
+                if (!$isset) {
+                    return null;
+                }
+        }
 
         return $haystack[$needle];
     }
