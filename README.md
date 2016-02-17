@@ -135,6 +135,28 @@ protected function getAttributes() {
 - `email` Verifies that the value is a valid email address
 - `url` Verifies that the value is a valid url
 - `date` Verifies that the value is in a valid date format
+- `class:className` Verifies that this is a valid ID for an object of the given class **(Not yet implemented)**
+- `custom:methodName` Add your own validation rule **(Not yet implemented)**
+
+#### Custom validation rules **(Not yet implemented)**
+You can write your validation rules if the provided ones do not suffice:
+```php
+protected function getAttributes() {
+    return array(
+        'categoryID' => array(
+            'rule' => 'custom:validateCategoryID',
+        ),
+    );
+}
+
+private function validateCategoryID($value) {
+    $category = new \wcf\data\category\Category($value);
+    return $category->categoryID;
+}
+```
+As you can see, by adding a custom method to your class (`validateCategoryID` in this case) you can write your own verification logic. Your method will automatically be called on validation and if it returns a [_falsy_](http://php.net/manual/en/language.types.boolean.php#language.types.boolean.casting) value, a `UserInputException` will be called with the type `custom`.
+
+This is just a simple example and is equivalent to the rule `class:\wcf\data\category\Category`.
 
 ## getObjectActionType()
 To save your model, you need to create a class that inherits from `wcf\data\AbstractDatabaseObjectAction`. The Form Builder uses your object action implementation to create and update your model. Therefore you need to specify the class and namespace for your action.
