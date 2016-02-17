@@ -1,6 +1,7 @@
 <?php
 namespace wcf\form;
 use wcf\system\exception\UserInputException;
+use wcf\system\exception\IllegalLinkException;
 use wcf\util\StringUtil;
 use wcf\system\WCF;
 
@@ -15,6 +16,9 @@ use wcf\system\WCF;
  */
 abstract class FormBuilder extends AbstractForm {
     private $attributeList = null;
+    private $primaryAttribute = null;
+
+    protected $object = null;
 
     protected $valueList = array();
 
@@ -27,6 +31,10 @@ abstract class FormBuilder extends AbstractForm {
      */
     protected $modelAction = 'create';
 
+    protected $templateAction = 'add';
+
+    protected $requiresValidObject = false;
+
     /**
      * Return a list of attributes that is to be used in this form.
      *
@@ -35,11 +43,21 @@ abstract class FormBuilder extends AbstractForm {
     protected abstract function getAttributes();
 
     /**
-     * Namespace and class name for the object action type, if used.
+     * Namespace and class name for the object action type.
      *
      * @return string
      */
     protected abstract function getObjectActionType();
+
+    /**
+     * Namespace and class name for the model to be used in this form.
+     *
+     * @return string
+     */
+    protected function getObjectTypeName()
+    {
+        return '';
+    }
 
     /**
      * Builds an attribute list from the values received in getAttributes()
@@ -68,11 +86,18 @@ abstract class FormBuilder extends AbstractForm {
                 'rule'     => 'isset',
                 'skip'     => false,
             ), $options);
+
+            if (isset($options['primary']) && $options['primary'] == true) {
+                $this->primaryAttribute = $name;
+            }
         }
 
         return $this->attributeList = $list;
     }
 
+    /**
+     * Initializes the values list based on the defined attribute list.
+     */
     protected function initializeValues()
     {
         foreach ($this->buildAttributeList() as $name => $options) {
@@ -127,22 +152,33 @@ abstract class FormBuilder extends AbstractForm {
         }
 
         $attributeList = $this->buildAttributeList();
-        $values = $this->valueList;
 
-        $matchedKeys = array_filter(array_keys($values), function($element) use ($attributeList) {
+        // Exclude attributes that shouldn't be saved
+        $data = $this->valueList;
+        $matchedKeys = array_filter(array_keys($data), function($element) use ($attributeList) {
             return !$attributeList[$element]['skip'];
         });
+        $data = array_intersect_key($data, array_flip($matchedKeys));
 
-        $values = array_intersect_key($values, array_flip($matchedKeys));
+        // Include object when it is set and should be saved
+        $objectArray = is_null($this->object) ? array() : array($this->object);
 
+        // Create the object action
         $objectActionType = $this->getObjectActionType();
-        $this->objectAction = new $objectActionType(array(), $this->modelAction, array(
-            'data' => array_merge($this->additionalFields, $values),
+        $this->objectAction = new $objectActionType($objectArray, $this->modelAction, array(
+            'data' => array_merge($this->additionalFields, $data),
         ));
 
         $this->objectAction->executeAction();
         $this->saved();
 
+        // Rebuild the object
+        $objectType = $this->getObjectTypeName();
+        if ($objectType !== false) {
+            $this->object = new $objectType($this->valueList[$this->primaryAttribute]);
+        }
+
+        // Assign template variables
         WCF::getTPL()->assign(array(
             'success' => true,
         ));
@@ -159,6 +195,32 @@ abstract class FormBuilder extends AbstractForm {
  
         foreach ($this->buildAttributeList() as $name => $options) {
             $this->valueList[$name] = $this->readParameter($name, $_POST, $options['type']);
+        }
+            
+    }
+
+    /**
+     * Reads the given parameters.
+     *
+     * @see \wcf\page\IPage::readParameters()
+     */
+    public function readParameters()
+    {
+        parent::readParameters();
+
+        $this->buildAttributeList();
+
+        if ($this->requiresValidObject) {
+            $primaryAttribute = $this->primaryAttribute;
+
+            if (isset($_REQUEST['id'])) $this->valueList[$primaryAttribute] = intval($_REQUEST['id']);
+
+            $objectType = $this->getObjectTypeName();
+            $this->object = new $objectType($this->valueList[$primaryAttribute]);
+
+            if (!$this->object->$primaryAttribute) {
+                throw new IllegalLinkException();
+            }
         }
     }
 
@@ -227,7 +289,8 @@ abstract class FormBuilder extends AbstractForm {
 
         WCF::getTPL()->assign(array_merge(
             array(
-                'action' => 'add'
+                'action' => $this->templateAction,
+                'object' => $this->object,
             ),
             $this->valueList
         ));
