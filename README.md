@@ -77,7 +77,6 @@ use wcf\form\FormBuilder;
 class MyExampleAddForm extends FormBuilder {
     protected function getAttributes() {
         return array(
-            'exampleID' => 'int',
             'title' => 'string',
             'description' => 'string',
         );
@@ -98,20 +97,14 @@ This is the main method you need to implement. You define which attributes your 
 ```php
 protected function getAttributes() {
     return array(
-        'exampleID' => array(
-            // The type to which the value should be converted to
-            'type'     => 'int',
-            // Should this value be required or not?
-            'required' => false,
-            // Skip this value when saving the object to the database
-            'skip'     => true,
-            // Validation rule to be applied to the value (see "Validation Rules")
-            'rule'     => 'integer',
-        ),
         'description' => array(
+            // The type to which the value should be converted to
             'type'     => 'string',
+            // Should this value be required or not?
             'required' => true,
+            // Skip this value when saving the object to the database
             'skip'     => false,
+            // Validation rule to be applied to the value (see "Validation Rules")
             'rule'     => 'string',
         ),
     );
@@ -121,11 +114,12 @@ Alternatively, you can just specify the type of your attribute. This will automa
 ```php
 protected function getAttributes() {
     return array(
-        'exampleID'   => 'int',
         'description' => 'string',
     );
 }
 ```
+
+*The Form Builder automatically adds an ID field to your template variables called `primaryID`.*
 
 ### Validation Rules
 - `isset` **(Default)** Verifies that the value is present in the request
@@ -147,11 +141,21 @@ protected function getObjectActionType() {
     // Or, with PHP >=5.5, if you're not planning to support lower versions:
     // return \wcf\data\example\ExampleAction::class;
 }
+
+```
+## getObjectTypeName()
+Needs to be set when `$requiresValidObject` is set to true. It should return a string containing the name (including namespace) of your model, so it can be instantiated for you on a request.
+```php
+protected function getObjectTypeName() {
+    return 'wcf\data\example\Example';
+}
 ```
 
 ## Settings
-- `protected $action` **(Default: `'create'`)** The action to perform on the object (e.g. `'create'` or `'update'`)
+- `protected $modelAction` **(Default: `'create'`)** The action to perform on the object (e.g. `'create'` or `'update'`)
 - `protected $usePersonalSave` **(Default: `false`)** If set to `true`, the Form Builder's implementation of `save()` will not be executed. You have to add your own implementation (including a `super::save()`-call)
+- `protected $templateAction` **(Default: `'add'`)** The value that the template variable `action` will be set to
+- `protected $requiresValidObject` **(Default: `false`)** Whether or not a request needs a valid object
 
 # Roadmap
 There's no definitive roadmap yet, but I'm planning on adding an automated form template builder alongside the FormBuilder class.
