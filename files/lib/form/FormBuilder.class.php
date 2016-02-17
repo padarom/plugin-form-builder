@@ -297,6 +297,7 @@ abstract class FormBuilder extends AbstractForm {
             array(
                 'action' => $this->templateAction,
                 'object' => $this->object,
+                'primaryID' => null,
             ),
             $this->valueList
         ));
