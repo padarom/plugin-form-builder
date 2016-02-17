@@ -158,4 +158,7 @@ protected function getObjectTypeName() {
 - `protected $requiresValidObject` **(Default: `false`)** Whether or not a request needs a valid object
 
 # Roadmap
-There's no definitive roadmap yet, but I'm planning on adding an automated form template builder alongside the FormBuilder class.
+There's no definitive roadmap yet, but I'm planning on adding the following features:
+
+- An automated form template builder alongside the FormBuilder class (This will be the main priority for version 1.0)
+- Possibility for relations/dependent classes (i.e. each `Example` must be linked to a valid `ExampleCategory`)
