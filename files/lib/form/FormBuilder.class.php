@@ -1,6 +1,7 @@
 <?php
 namespace wcf\form;
 use wcf\system\WCF;
+use wcf\system\exception\UserInputException;
 
 /**
  * Form Builder for easier form development
@@ -23,7 +24,7 @@ abstract class FormBuilder extends AbstractForm {
      *
      * @var string
      */
-    protected $action = 'create';
+    protected $modelAction = 'create';
 
     /**
      * Return a list of attributes that is to be used in this form.
@@ -71,6 +72,13 @@ abstract class FormBuilder extends AbstractForm {
         return $this->attributeList = $list;
     }
 
+    protected function initializeValues()
+    {
+        foreach ($this->buildAttributeList() as $name => $options) {
+            $this->valueList[$name] = null;
+        }
+    }
+
     /**
      * Is called when the form was submitted.
      *
@@ -97,7 +105,7 @@ abstract class FormBuilder extends AbstractForm {
                 continue;
 
             // Validate the attribute
-            if (!Validator::validate($this->valueList[$name]), $options['rule'])) {
+            if (!Validator::validate($this->valueList[$name], $options['rule'])) {
                 throw new UserInputException($name);
             }
         }
@@ -123,7 +131,7 @@ abstract class FormBuilder extends AbstractForm {
         });
 
         $objectActionType = $this->getObjectActionType();
-        $this->objectAction = new $objectActionType(array(), $this->action, array(
+        $this->objectAction = new $objectActionType(array(), $this->modelAction, array(
             'data' => array_merge($this->additionalFields, $values),
         ));
 
@@ -157,7 +165,7 @@ abstract class FormBuilder extends AbstractForm {
      * @param  string     $type       The type the value should be converted to
      * @return mixed|null
      */
-    protected function readParameter($needle, $haystack, $type == 'string') 
+    protected function readParameter($needle, $haystack, $type = 'string') 
     {
         if (!isset($haystack[$needle]))
             return null;
@@ -195,8 +203,13 @@ abstract class FormBuilder extends AbstractForm {
     {
         parent::assignVariables();
 
-        WCF::getTPL()->assign(array(
+        $this->initializeValues();
 
+        WCF::getTPL()->assign(array_merge(
+            array(
+                'action' => 'add'
+            ),
+            $this->valueList
         ));
     }
 }
