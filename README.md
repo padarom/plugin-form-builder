@@ -90,9 +90,6 @@ class MyExampleAddForm extends FormBuilder {
 ```
 This short example accomplishes the same thing, yet it only requires us to write 18 lines of code. __That's a reduction of almost 70%!__ I'd argue it's a lot more readable but undoubtedly it's not at all repetitive or unnecessarily verbose.
 
-# Roadmap
-There's no definitive roadmap yet, but I'm planning on adding an automated form template builder alongside the FormBuilder class.
-
 # How to use
 Build a class that inherits from `wcf\form\FormBuilder`. FormBuilder contains two abstract methods: `getAttributes()` and `getObjectActionType()`.
 
@@ -151,3 +148,10 @@ protected function getObjectActionType() {
     // return \wcf\data\example\ExampleAction::class;
 }
 ```
+
+## Settings
+- `protected $action` **(Default: `'create'`)** The action to perform on the object (e.g. `'create'` or `'update'`)
+- `protected $usePersonalSave` **(Default: `false`)** If set to `true`, the Form Builder's implementation of `save()` will not be executed. You have to add your own implementation (including a `super::save()`-call)
+
+# Roadmap
+There's no definitive roadmap yet, but I'm planning on adding an automated form template builder alongside the FormBuilder class.
