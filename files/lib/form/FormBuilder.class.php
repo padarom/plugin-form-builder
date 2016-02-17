@@ -156,6 +156,9 @@ abstract class FormBuilder extends AbstractForm {
         // Exclude attributes that shouldn't be saved
         $data = $this->valueList;
         $matchedKeys = array_filter(array_keys($data), function($element) use ($attributeList) {
+            if ($element == "primaryID")
+                return false;
+
             return !$attributeList[$element]['skip'];
         });
         $data = array_intersect_key($data, array_flip($matchedKeys));
@@ -213,7 +216,10 @@ abstract class FormBuilder extends AbstractForm {
         if ($this->requiresValidObject) {
             $primaryAttribute = $this->primaryAttribute;
 
-            if (isset($_REQUEST['id'])) $this->valueList[$primaryAttribute] = intval($_REQUEST['id']);
+            if (isset($_REQUEST['id'])) {
+                $this->valueList["primaryID"] = intval($_REQUEST['id']);
+                $this->valueList[$primaryAttribute] = intval($_REQUEST['id']);
+            }
 
             $objectType = $this->getObjectTypeName();
             $this->object = new $objectType($this->valueList[$primaryAttribute]);
