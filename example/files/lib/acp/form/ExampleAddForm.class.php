@@ -8,13 +8,9 @@ class ExampleAddForm extends FormBuilder
 
     protected function getAttributes() {
         return array(
-            'branchID' => array(
-                'type' => 'int',
-                'primary' => true,
-                'skip' => true,
-            ),
             'title' => 'string',
             'description' => 'string',
+            'isDisabled' => 'bool',
         );
     }
 
