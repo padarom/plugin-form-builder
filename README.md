@@ -78,7 +78,7 @@ class MyExampleAddForm extends FormBuilder {
     protected function getAttributes() {
         return array(
             'exampleID' => 'int',
-            'title' => 'string'
+            'title' => 'string',
             'description' => 'string',
         );
     }
