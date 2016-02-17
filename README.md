@@ -94,7 +94,7 @@ class MyExampleAddForm extends FormBuilder {
 This short example accomplishes the same thing, yet it only requires us to write 18 lines of code. __That's a reduction of over 70%!__ I'd argue it's a lot more readable but undoubtedly it's not at all repetitive or unnecessarily verbose.
 
 # How to use
-Build a class that inherits from `wcf\form\FormBuilder`. FormBuilder contains two abstract methods: `getAttributes()` and `getObjectActionType()`.
+Create a class that inherits from `wcf\form\FormBuilder`. FormBuilder contains two abstract methods that need to be implemented: `getAttributes()` and `getObjectActionType()`.
 
 ## getAttributes()
 This is the main method you need to implement. You define which attributes your form has and can be filled out in the form. It will be used to determine which template variables to fill, which fields to use in your objectAction and how to validate your form attributes.
@@ -148,7 +148,7 @@ protected function getObjectActionType() {
 
 ```
 ## getObjectTypeName()
-Needs to be set when `$requiresValidObject` is set to true. It should return a string containing the name (including namespace) of your model, so it can be instantiated for you on a request.
+Needs to be set when `$requiresValidObject` is set to true. It should return a string containing the name of your model, so it can be instantiated for you on a request.
 ```php
 protected function getObjectTypeName() {
     return 'wcf\data\example\Example';
@@ -160,6 +160,19 @@ protected function getObjectTypeName() {
 - `protected $usePersonalSave` **(Default: `false`)** If set to `true`, the Form Builder's implementation of `save()` will not be executed. You have to add your own implementation (including a `super::save()`-call)
 - `protected $templateAction` **(Default: `'add'`)** The value that the template variable `action` will be set to
 - `protected $requiresValidObject` **(Default: `false`)** Whether or not a request needs a valid object
+
+## More complicated logic
+In case your code requires more complicated logic that isn't included in the Form Builder yet, you can just overwrite these methods like so:
+```php
+public function validate()
+{
+    // This will also call FormBuilder's validation methods, 
+    // so you don't need to do twice the amount of work, just your additional logic.
+    super::validate();
+
+    // Your complicated logic goes here
+}
+```
 
 # Roadmap
 There's no definitive roadmap yet, but I'm planning on adding the following features:
