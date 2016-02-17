@@ -7,8 +7,8 @@ This package is targetted at developers, not at forum owners/admins. It doesn't 
 ```php
 <?php
 namespace wcf\acp\form;
-
 use wcf\form\AbstractForm;
+use wcf\util\StringUtil;
 
 class MyExampleAddForm extends AbstractForm {
     public $exampleID = 0;
@@ -18,6 +18,7 @@ class MyExampleAddForm extends AbstractForm {
     public function readFormParameters() {
         parent::readFormParameters();
 
+        if (isset($_POST['exampleID'])) $this->exampleID = intval($_POST['exampleID']);
         if (isset($_POST['title'])) $this->title = StringUtil::trim($_POST['title']);
         if (isset($_POST['description'])) $this->description = StringUtil::trim($_POST['description']);
     }
@@ -58,20 +59,19 @@ class MyExampleAddForm extends AbstractForm {
 
         WCF::getTPL()->assign(array(
             'action' => 'add',
-            'exampleID' => $this->branchID,
+            'exampleID' => $this->exampleID,
             'title' => $this->title,
             'description' => $this->description,
         ));
     }
 }
 ```
-As you can see, even this simple example contains a lot of boilerplate and repetition. We define a form that managed three attributes: `exampleID`, `title` and `description`, yet we need 59 lines of code to do that. We manually need to read the form parameters, define our save action, assign variables for template rendering and potentially even more.
+As you can see, even this simple example contains a lot of boilerplate and repetition. We define a form that managed three attributes: `exampleID`, `title` and `description`, yet we need 60 lines of code to do that. We manually need to read the form parameters, define our save action, assign variables for template rendering and potentially even more.
 
 ## After
 ```php
 <?php
 namespace wcf\acp\form;
-
 use wcf\form\FormBuilder;
 
 class MyExampleAddForm extends FormBuilder {
@@ -87,7 +87,7 @@ class MyExampleAddForm extends FormBuilder {
     }
 }
 ```
-This short example accomplishes the same thing, yet it only requires us to write 18 lines of code. __That's a reduction of almost 70%!__ I'd argue it's a lot more readable but undoubtedly it's not at all repetitive or unnecessarily verbose.
+This short example accomplishes the same thing, yet it only requires us to write 16 lines of code. __That's a reduction of over 70%!__ I'd argue it's a lot more readable but undoubtedly it's not at all repetitive or unnecessarily verbose.
 
 # How to use
 Build a class that inherits from `wcf\form\FormBuilder`. FormBuilder contains two abstract methods: `getAttributes()` and `getObjectActionType()`.

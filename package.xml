@@ -14,7 +14,11 @@
 
     <requiredpackages>
         <requiredpackage minversion="2.0">com.woltlab.wcf</requiredpackage>
-    </requiredpackages>
+    </requiredpackages> 
+
+    <excludedpackages>
+        <excludedpackage version="2.2">com.woltlab.wcf</excludedpackage>
+    </excludedpackages>
 
     <instructions type="install">
         <instruction type="file">files.tar</instruction>
