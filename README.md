@@ -135,7 +135,7 @@ protected function getAttributes() {
 - `email` Verifies that the value is a valid email address
 - `url` Verifies that the value is a valid url
 - `date` Verifies that the value is in a valid date format
-- `class:className` Verifies that this is a valid ID for an object of the given class **(Not yet implemented)**
+- `class:className` Verifies that this is a valid ID for an object of the given class
 - `custom:methodName` Add your own validation rule **(Not yet implemented)**
 
 #### Custom validation rules **(Not yet implemented)**

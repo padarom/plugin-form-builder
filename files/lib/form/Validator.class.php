@@ -27,26 +27,58 @@ class Validator {
         return self::$methodName($value, $parameters);
     }
 
+    /**
+     * Validates that a given value is an integer.
+     *
+     * @param  mixed  $value
+     * @return bool
+     */
     protected static function validateInteger($value)
     {
         return is_null($value) || filter_var($value, FILTER_VALIDATE_INT) !== false;
     }
 
+    /**
+     * Validates that a given value is numeric.
+     *
+     * @param  mixed  $value
+     * @return bool
+     */
     protected static function validateNumeric($value)
     {
         return is_null($value) || is_numeric($value);
     }
 
+    /**
+     * Validates that a given value is of the type string.
+     *
+     * @param  mixed  $value
+     * @return bool
+     */
     protected static function validateString($value)
     {
         return is_null($value) || is_string($value);
     }
 
+    /**
+     * Validates that a given value has exactly N digits.
+     *
+     * @param  mixed  $value
+     * @param  array  $parameters
+     * @return bool
+     */
     protected static function validateDigits($value, $parameters)
     {
         return $this->validateNumeric($value) && strlen((string) $value) == $parameters[0];
     }
 
+    /**
+     * Validates that a given value is numeric and has between N and M digits.
+     *
+     * @param  mixed  $value
+     * @param  array  $parameters
+     * @return bool
+     */
     protected static function validateDigitsBetween($value, $parameters)
     {
         $length = strlen((string) $value);
@@ -55,11 +87,23 @@ class Validator {
             && $length >= $parameters[0] && $length <= $parameters[1];
     }
 
+    /**
+     * Validates that a given value is a valid email address.
+     *
+     * @param  mixed  $value
+     * @return bool
+     */
     protected static function validateEmail($value)
     {
         return filter_var($value, FILTER_VALIDATE_EMAIL) !== false;
     }
 
+    /**
+     * Validates that a given value is a valid URL.
+     *
+     * @param  mixed  $value
+     * @return bool
+     */
     protected static function validateUrl($value)
     {
         /*
@@ -85,6 +129,12 @@ class Validator {
         return preg_match($pattern, $value) === 1;
     }
 
+    /**
+     * Validates that a given value is an instance of DateTime or is parseable to a time.
+     *
+     * @param  mixed  $value
+     * @return bool
+     */
     protected static function validateDate($value)
     {
         if ($value instanceof DateTime)
@@ -98,9 +148,33 @@ class Validator {
         return checkdate($date['month'], $date['day'], $date['year']);
     }
 
+
+    /**
+     * Validates that a given value is set and not null.
+     *
+     * @param  mixed  $value
+     * @return bool
+     */
     protected static function validateIsset($value)
     {
         return isset($value);
+    }
+
+    /**
+     * Validates that a given ID instantiates a valid object.
+     *
+     * @param  mixed  $value
+     * @param  array  $parameters
+     * @return bool
+     */
+    protected static function validateClass($value, $parameters)
+    {
+        $class = $parameters[0];
+
+        $object = new $class($value);
+        $attribute = $class::getDatabaseTableIndexName();
+
+        return $object->$attribute;
     }
 
     protected static function parseRule($rules)
