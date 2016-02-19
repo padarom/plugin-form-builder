@@ -125,6 +125,15 @@ abstract class FormBuilder extends AbstractForm {
             if ($options['required'] == false)
                 continue;
 
+            // Custom rules need to be specified independently
+            if ($options['rule'] == 'custom') {
+                $ruleParts = explode(':', $options['rule']);
+                $validationResult = user_call_func(array($this, $ruleParts[1]), $this->valueList[$name]);
+                if (!$validatenResult) {
+                    throw new UserInputException($name, $options['rule']);
+                }
+            }
+
             // Validate the attribute
             if (!Validator::validate($this->valueList[$name], $options['rule'])) {
                 throw new UserInputException($name, $options['rule']);

@@ -136,9 +136,9 @@ protected function getAttributes() {
 - `url` Verifies that the value is a valid url
 - `date` Verifies that the value is in a valid date format
 - `class:className` Verifies that this is a valid ID for an object of the given class
-- `custom:methodName` Add your own validation rule **(Not yet implemented)**
+- `custom:methodName` Add your own validation rule
 
-#### Custom validation rules **(Not yet implemented)**
+#### Custom validation rules
 You can write your validation rules if the provided ones do not suffice:
 ```php
 protected function getAttributes() {
