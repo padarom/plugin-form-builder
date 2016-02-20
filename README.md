@@ -199,5 +199,5 @@ public function validate()
 # Roadmap
 There's no definitive roadmap yet, but I'm planning on adding the following features:
 
-- An automated form template builder alongside the FormBuilder class (This will be the main priority for version 1.0)
-- Possibility for relations/dependent classes (i.e. each `Example` must be linked to a valid `ExampleCategory`)
+- [ ] An automated form template builder alongside the FormBuilder class (This will be the main priority for version 1.0)
+- [x] Possibility for relations/dependent classes (i.e. each `Example` must be linked to a valid `ExampleCategory`); *This has been implemented with the "class" validation rule*
