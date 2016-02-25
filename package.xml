@@ -21,6 +21,7 @@
     </excludedpackages>
 
     <instructions type="install">
+        <instruction type="acpTemplate">acptemplates.tar</instruction>
         <instruction type="file">files.tar</instruction>
     </instructions>
 </package>

@@ -3,6 +3,8 @@ This package for the Woltlab Community Framwork aims to make form development ea
 
 This package is targetted at developers, not at forum owners/admins. It doesn't add any functionality on its own, it just provides tools to make development easier. You don't need to install this package, if you don't also use other packages that make use of this one.
 
+_At this point, it only supports ACP forms, frontend form support will be a subject for the future._ If you find any bugs, have questions or suggestions for new features, feel free to start GitHub issues for them.
+
 ## Before
 ```php
 <?php
