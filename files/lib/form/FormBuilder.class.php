@@ -23,6 +23,8 @@ abstract class FormBuilder extends AbstractForm {
 
     protected $usePersonalSave = false;
 
+    protected $templateName = 'formBuilder';
+
     /*
      * The action to be performed on the object action type.
      *
