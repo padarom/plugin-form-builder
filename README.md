@@ -203,3 +203,6 @@ There's no definitive roadmap yet, but I'm planning on adding the following feat
 
 - [ ] An automated form template builder alongside the FormBuilder class (This will be the main priority for version 1.0)
 - [x] Possibility for relations/dependent classes (i.e. each `Example` must be linked to a valid `ExampleCategory`); *This has been implemented with the "class" validation rule*
+
+# License
+This work is licensed under the GPLv3 license. For further information, either read the [full license text](https://github.com/Padarom/Form-Builder/blob/master/LICENSE) or for a quick reference take a look at [tl;dr Legal](https://tldrlegal.com/license/gnu-general-public-license-v3-(gpl-3)).
