@@ -5,6 +5,8 @@ This package is targetted at developers, not at forum owners/admins. It doesn't 
 
 _At this point, it only supports ACP forms, frontend form support will be a subject for the future._ If you find any bugs, have questions or suggestions for new features, feel free to start GitHub issues for them.
 
+The plugin can also be found in WoltLab's official [Plugin Store](https://pluginstore.woltlab.com/file/2301-form-builder/).
+
 ## Before
 ```php
 <?php
