@@ -75,7 +75,7 @@ abstract class FormBuilder extends AbstractForm {
      */
     protected function getObjectTypeName()
     {
-        return '';
+        return false;
     }
 
     /**
