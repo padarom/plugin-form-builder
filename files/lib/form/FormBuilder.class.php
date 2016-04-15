@@ -116,18 +116,10 @@ abstract class FormBuilder extends AbstractForm {
     protected function initializeValues()
     {
         foreach ($this->buildAttributeList() as $name => $options) {
-            $this->valueList[$name] = null;
+            if (!isset($this->valueList[$name])) {
+                $this->valueList[$name] = null;
+            }
         }
-    }
-
-    /**
-     * Is called when the form was submitted.
-     *
-     * @see \wcf\form\IForm::submit()
-     */
-    public function submit() 
-    {
-        parent::submit();
     }
     
     /**
@@ -281,27 +273,6 @@ abstract class FormBuilder extends AbstractForm {
         }
 
         return $haystack[$needle];
-    }
-
-    /**
-     * Calls the 'saved' event after the successful call of the save method.
-     * This functions won't called automatically. You must do this manually, if you inherit AbstractForm.
-     *
-     * @see \wcf\form\AbstractForm::saved()
-     */
-    protected function saved() 
-    {
-        parent::saved();
-    }
-
-    /**
-     * Reads/Gets the data to be displayed on this page.
-     *
-     * @see \wcf\page\IPage::readData()
-     */
-    public function readData() 
-    {
-        parent::readData();
     }
 
     /**
