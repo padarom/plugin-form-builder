@@ -114,14 +114,13 @@ abstract class FormBuilder extends AbstractForm {
      * Initializes the values list based on the defined attribute list.
      */
     protected function initializeValues()
-	{
-		foreach ($this->buildAttributeList() as $name => $options) {
-		    //check if dont´t value/option exist
-			if(!isset($this->valueList[$name])){
-				$this->valueList[$name] = '';
-			}
-		}
-	}
+    {
+        foreach ($this->buildAttributeList() as $name => $options) {
+            if (!isset($this->valueList[$name])) {
+                $this->valueList[$name] = null;
+            }
+        }
+    }
     
     /**
      * Validates form inputs.
@@ -274,22 +273,6 @@ abstract class FormBuilder extends AbstractForm {
         }
 
         return $haystack[$needle];
-    }
-
-    /**
-     * Reads/Gets the data to be displayed on this page.
-     *
-     * @see \wcf\page\IPage::readData()
-     */
-    public function readData() 
-    {
-        parent::readData();
-        //add values if this a edit form page
-        if($this->requiresValidObject && empty($_POST)){
-			foreach($this->buildAttributeList() as $name => $options){
-				$this->valueList[$name] = $this->object->$name;
-			}
-		}
     }
 
     /**
