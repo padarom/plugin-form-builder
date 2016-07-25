@@ -3,8 +3,8 @@
     <packageinformation>
         <packagename>Form Builder DevTool</packagename>
         <packagedescription>A development tool that aims to make form building easier</packagedescription>
-        <version>0.9.3</version>
-        <date>2016-03-02</date>
+        <version>0.10.0</version>
+        <date>2016-07-25</date>
     </packageinformation>
 
     <authorinformation>
@@ -30,6 +30,10 @@
     </instructions>
 
     <instructions type="update" fromversion="0.9.2">
+        <instruction type="file">files.tar</instruction>
+    </instructions>
+
+    <instructions type="update" fromversion="0.9.3">
         <instruction type="file">files.tar</instruction>
     </instructions>
 </package>
