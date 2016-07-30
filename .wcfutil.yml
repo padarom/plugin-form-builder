@@ -1,0 +1,12 @@
+package:
+    destination: io.padarom.devtools.formbuilder.tar
+    files:
+        exclude:
+            - README.md
+            - LICENSE
+            - exammples
+            - .gitignore
+            - .travis.yml
+        tarball:
+            - acpTemplates: acptemplates
+            - files

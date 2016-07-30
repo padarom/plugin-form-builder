@@ -194,7 +194,7 @@ public function validate()
 {
     // This will also call FormBuilder's validation methods, 
     // so you don't need to do twice the amount of work, just your additional logic.
-    super::validate();
+    parent::validate();
 
     // Your complicated logic goes here
 }

@@ -138,18 +138,17 @@ abstract class FormBuilder extends AbstractForm {
                 continue;
 
             // Custom rules need to be specified independently
-            if ($options['rule'] == 'custom') {
+            if (strpos($options['rule'], 'custom') === 0) {
                 $ruleParts = explode(':', $options['rule']);
-                $validationResult = user_call_func(array($this, $ruleParts[1]), $this->valueList[$name]);
-                if (!$validatenResult) {
+                $validationResult = call_user_func(array($this, $ruleParts[1]), $this->valueList[$name]);
+                if (!$validationResult) {
                     throw new UserInputException($name, $options['rule']);
                 }
             }
 
             // Validate the attribute
-            if (!Validator::validate($this->valueList[$name], $options['rule'])) {
+            elseif (!Validator::validate($this->valueList[$name], $options['rule']))
                 throw new UserInputException($name, $options['rule']);
-            }
         }
     }
 
@@ -163,9 +162,8 @@ abstract class FormBuilder extends AbstractForm {
         parent::save();
 
         // Don't run any of this code if it's not desired.
-        if ($this->usePersonalSave) {
+        if ($this->usePersonalSave)
             return;
-        }
 
         $attributeList = $this->buildAttributeList();
 
@@ -194,11 +192,16 @@ abstract class FormBuilder extends AbstractForm {
         // Rebuild the object
         $objectType = $this->getObjectTypeName();
         if ($objectType !== false) {
-            $this->object = new $objectType($this->valueList["primaryID"]);
+            if (!($primaryID = $this->valueList["primaryID"])) {
+                $primaryID = null;
+            }
+
+            $this->object = new $objectType($primaryID);
         }
 
         // Assign template variables
         WCF::getTPL()->assign(array(
+            'saved' => true,
             'success' => true,
         ));
     }
@@ -286,11 +289,16 @@ abstract class FormBuilder extends AbstractForm {
 
         $this->initializeValues();
 
+        if (!$this->object && $className = $this->getObjectTypeName()) {
+            $this->object = new $className(null);
+        }
+
         WCF::getTPL()->assign(array_merge(
             array(
                 'action' => $this->templateAction,
                 'object' => $this->object,
                 'primaryID' => null,
+                'saved' => false,
             ),
             $this->valueList
         ));
