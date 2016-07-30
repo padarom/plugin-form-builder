@@ -28,18 +28,17 @@ namespace wcf\form;
  * @subpackage  form
  * @category    Community Framework
  */
-class Validator {
-	public static function validate($value, $rule)
-	{
+class Validator{
+	public static function validate($value, $rule){
 		list($rule, $parameters) = self::parseRule($rule);
 
-		if ($rule == '') {
+		if($rule == ''){
 			return;
 		}
 
-		$methodName = "validate" . $rule;
+		$methodName = "validate".$rule;
 
-		if (!method_exists('wcf\form\Validator', $methodName))
+		if(!method_exists('wcf\form\Validator', $methodName))
 			throw new \Exception("There is no validator for the rule '$rule'.");
 
 		return self::$methodName($value, $parameters);
@@ -48,58 +47,58 @@ class Validator {
 	/**
 	 * Validates that a given value is an integer.
 	 *
-	 * @param  mixed  $value
+	 * @param  mixed $value
+	 *
 	 * @return bool
 	 */
-	protected static function validateInteger($value)
-	{
+	protected static function validateInteger($value){
 		return is_null($value) || filter_var($value, FILTER_VALIDATE_INT) !== false;
 	}
 
 	/**
 	 * Validates that a given value is numeric.
 	 *
-	 * @param  mixed  $value
+	 * @param  mixed $value
+	 *
 	 * @return bool
 	 */
-	protected static function validateNumeric($value)
-	{
+	protected static function validateNumeric($value){
 		return is_null($value) || is_numeric($value);
 	}
 
 	/**
 	 * Validates that a given value is of the type string.
 	 *
-	 * @param  mixed  $value
+	 * @param  mixed $value
+	 *
 	 * @return bool
 	 */
-	protected static function validateString($value)
-	{
+	protected static function validateString($value){
 		return is_null($value) || is_string($value);
 	}
 
 	/**
 	 * Validates that a given value has exactly N digits.
 	 *
-	 * @param  mixed  $value
-	 * @param  array  $parameters
+	 * @param  mixed $value
+	 * @param  array $parameters
+	 *
 	 * @return bool
 	 */
-	protected static function validateDigits($value, $parameters)
-	{
-		return self::validateNumeric($value) && strlen((string) $value) == $parameters[0];
+	protected static function validateDigits($value, $parameters){
+		return self::validateNumeric($value) && strlen((string)$value) == $parameters[0];
 	}
 
 	/**
 	 * Validates that a given value is numeric and has between N and M digits.
 	 *
-	 * @param  mixed  $value
-	 * @param  array  $parameters
+	 * @param  mixed $value
+	 * @param  array $parameters
+	 *
 	 * @return bool
 	 */
-	protected static function validateDigitsBetween($value, $parameters)
-	{
-		$length = strlen((string) $value);
+	protected static function validateDigitsBetween($value, $parameters){
+		$length = strlen((string)$value);
 
 		return self::validateNumeric($value)
 		&& $length >= $parameters[0] && $length <= $parameters[1];
@@ -108,22 +107,22 @@ class Validator {
 	/**
 	 * Validates that a given value is a valid email address.
 	 *
-	 * @param  mixed  $value
+	 * @param  mixed $value
+	 *
 	 * @return bool
 	 */
-	protected static function validateEmail($value)
-	{
+	protected static function validateEmail($value){
 		return filter_var($value, FILTER_VALIDATE_EMAIL) !== false;
 	}
 
 	/**
 	 * Validates that a given value is a valid URL.
 	 *
-	 * @param  mixed  $value
+	 * @param  mixed $value
+	 *
 	 * @return bool
 	 */
-	protected static function validateUrl($value)
-	{
+	protected static function validateUrl($value){
 		/*
 		 * This pattern is derived from Symfony\Component\Validator\Constraints\UrlValidator (2.7.4)
 		 * (c) Fabien Potencier <fabien@symfony.com> http://symfony.com
@@ -150,15 +149,15 @@ class Validator {
 	/**
 	 * Validates that a given value is an instance of DateTime or is parseable to a time.
 	 *
-	 * @param  mixed  $value
+	 * @param  mixed $value
+	 *
 	 * @return bool
 	 */
-	protected static function validateDate($value)
-	{
-		if ($value instanceof DateTime)
+	protected static function validateDate($value){
+		if($value instanceof DateTime)
 			return true;
 
-		if (strtotime($value) === false)
+		if(strtotime($value) === false)
 			return false;
 
 		$date = date_parse($value);
@@ -170,23 +169,23 @@ class Validator {
 	/**
 	 * Validates that a given value is set and not null.
 	 *
-	 * @param  mixed  $value
+	 * @param  mixed $value
+	 *
 	 * @return bool
 	 */
-	protected static function validateIsset($value)
-	{
+	protected static function validateIsset($value){
 		return isset($value);
 	}
 
 	/**
 	 * Validates that a given ID instantiates a valid object.
 	 *
-	 * @param  mixed  $value
-	 * @param  array  $parameters
+	 * @param  mixed $value
+	 * @param  array $parameters
+	 *
 	 * @return bool
 	 */
-	protected static function validateClass($value, $parameters)
-	{
+	protected static function validateClass($value, $parameters){
 		$class = $parameters[0];
 
 		$object = new $class($value);
@@ -195,11 +194,10 @@ class Validator {
 		return $object->$attribute;
 	}
 
-	protected static function parseRule($rules)
-	{
-		if (is_array($rules)) {
+	protected static function parseRule($rules){
+		if(is_array($rules)){
 			$rules = self::parseArrayRule($rules);
-		} else {
+		}else{
 			$rules = self::parseStringRules($rules);
 		}
 
@@ -208,15 +206,14 @@ class Validator {
 		return $rules;
 	}
 
-	protected static function parseArrayRule(array $rules) {
+	protected static function parseArrayRule(array $rules){
 		return array(self::studly($rules[0]), array_slice($rules, 1));
 	}
 
-	protected static function parseStringRules($rules)
-	{
+	protected static function parseStringRules($rules){
 		$parameters = [];
 
-		if (strpos($rules, ':') !== false) {
+		if(strpos($rules, ':') !== false){
 			list($rules, $parameter) = explode(':', $rules, 2);
 
 			$parameters = self::parseParameters($rules, $parameter);
@@ -225,18 +222,16 @@ class Validator {
 		return array(self::studly(trim($rules)), $parameters);
 	}
 
-	protected static function parseParameters($rule, $parameter)
-	{
-		if (strtolower($rule) == 'regex') {
+	protected static function parseParameters($rule, $parameter){
+		if(strtolower($rule) == 'regex'){
 			return array($parameter);
 		}
 
 		return str_getcsv($parameter);
 	}
 
-	protected static function normalizeRule($rule)
-	{
-		switch ($rule) {
+	protected static function normalizeRule($rule){
+		switch($rule){
 			case 'Int':
 				return 'Integer';
 			case 'Bool':
@@ -246,8 +241,7 @@ class Validator {
 		}
 	}
 
-	protected static function studly($value)
-	{
+	protected static function studly($value){
 		$value = ucwords(str_replace(array('-', '_'), ' ', $value));
 
 		return str_replace(' ', '', $value);
