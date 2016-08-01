@@ -28,7 +28,8 @@ namespace wcf\form;
  * @subpackage  form
  * @category    Community Framework
  */
-class Validator {
+class Validator 
+{
     public static function validate($value, $rule)
     {
         list($rule, $parameters) = self::parseRule($rule);
@@ -87,7 +88,7 @@ class Validator {
      */
     protected static function validateDigits($value, $parameters)
     {
-        return $this->validateNumeric($value) && strlen((string) $value) == $parameters[0];
+        return self::validateNumeric($value) && strlen((string) $value) == $parameters[0];
     }
 
     /**
@@ -101,7 +102,7 @@ class Validator {
     {
         $length = strlen((string) $value);
 
-        return $this->validateNumeric($value)
+        return self::validateNumeric($value)
             && $length >= $parameters[0] && $length <= $parameters[1];
     }
 
